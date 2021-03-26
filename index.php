@@ -95,7 +95,7 @@ if (!validate(@$_SERVER['PHP_AUTH_USER'], @$_SERVER['PHP_AUTH_PW'])) {
 </body>
 
 </html>
-
+<!-- 編輯跟新增共用modal -->
 <div id="postModal" class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -140,6 +140,28 @@ if (!validate(@$_SERVER['PHP_AUTH_USER'], @$_SERVER['PHP_AUTH_PW'])) {
                     <input type="hidden" name="customer_id" id="customer_id" />
                     <input type="submit" name="action" id="action" class="btn btn-success" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </from>
+        </div>
+    </div>
+</div>
+
+<!-- 詳細內容 modal -->
+<div id="infoModal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">PostINFO</h4>
+            </div>
+            <from>
+                <div class="modal-body">
+                <div id="post_info" class="table-responsive">
+
+</div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="customer_id" id="customer_id" />
+                    <button type="button" class="btn btn-secondary disabled" data-dismiss="modal">Close</button>
                 </div>
             </from>
         </div>
@@ -305,10 +327,6 @@ $(document).ready(function() {
             },
             dataType: "json",
             success: function(data) {
-                var content = data.content;
-                var content = CKEDITOR.instances.content.getData('123');
-                console.log(content);
-                console.log(CKEDITOR.instances.content.getData());
                 $('#postModal').modal('show');
                 $('.modal-title').text(
                     "Update Records"
@@ -321,17 +339,39 @@ $(document).ready(function() {
                     .category);
                 $('#subject').val(data
                     .subject);
-
-
                 $('#datetimepicker').val(data
                     .datetime);
                 $("#is_show").val(data
                     .is_show);
                 $('#content').val(data
                     .content);
+                    CKEDITOR.instances.content.setData(data.content);
+                    CKEDITOR.instances.content.getData();
+            }
+        });
+    });
 
-                // CKEDITOR.replace('content');
+    //點選詳細按鈕
+    $(document).on('click', '.info', function() {
+        var id = $(this).attr(
+            "id"
+        );
 
+        var action = "Info";
+        $.ajax({
+            url: "action.php",
+            method: "POST",
+            data: {
+                id: id,
+                action: action
+            },
+            success: function(data) {
+                $('#infoModal').modal('show');
+                $('.modal-title').text(
+                    "Post Info"
+                );
+                $('#post_info').html(data);
+               
             }
         });
     });
